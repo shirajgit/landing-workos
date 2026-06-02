@@ -73,14 +73,14 @@ const steps = [
 ];
 
 const plans = [
-  { name: "Starter", price: "₹0", period: "forever", features: ["Up to 5 users", "100 candidates", "Basic reports", "Email support"], cta: "Start free", highlight: false },
-  { name: "Pro", price: "₹999", period: "per month", features: ["Unlimited users", "Unlimited candidates", "Full analytics", "Team chat", "Priority support", "API access"], cta: "Start Pro trial", highlight: true },
-  { name: "Enterprise", price: "Custom", period: "", features: ["Everything in Pro", "Dedicated manager", "Custom integrations", "SLA", "On-premise option"], cta: "Contact sales", highlight: false },
+  { name: "Starter", price: "$0", period: "forever", features: ["Up to 5 users", "Tasks management", "Interview scheduling", "Dashboard"], cta: "Start free", highlight: false },
+  { name: "Pro", price: "$199", period: "per month", features: ["Unlimited users", "Unlimited candidates", "Full analytics", "Team chat", "Priority support", "API access"], cta: "Start Pro trial", highlight: true },
+  { name: "Enterprise", price: "Custom", period: "", features: ["Everything in Pro", "Dedicated manager", "Custom integrations", "On-premise option"], cta: "Contact sales", highlight: false },
 ];
 
 const testimonials = [
-  { text: "We finally have one place to see the whole pipeline. Status meetings got shorter overnight.", name: "Priya Sharma", role: "HR Manager, TechCorp" },
-  { text: "Adoption was quick. Tracking submissions and interviews is genuinely simple now.", name: "Arjun Mehta", role: "Talent Lead, ScaleUp" },
+  { text: "We finally have one place to see the whole pipeline. Status meetings got shorter overnight.", name: "James Handerson", role: "HR Manager, TechCorp" },
+  { text: "Adoption was quick. Tracking submissions and interviews is genuinely simple now.", name: "Shopia locaya", role: "Ceo, ScaleUp" },
   { text: "The reporting paid for itself. We cut two weeks off our average hiring cycle.", name: "Sneha Verma", role: "Recruitment Head, NexaHire" },
 ];
 
