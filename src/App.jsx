@@ -8,7 +8,7 @@ import { useState, useEffect, useRef } from "react";
 ──────────────────────────────────────────────────────────── */
 const HERO_POSTERS =  [
   "/public/poster1.jpeg",
-  "/public/poster2.jpeg",
+  "/public/poster2.png",
   "/public/poster3.jpeg",
   "/public/poster4.jpg",
 ]
