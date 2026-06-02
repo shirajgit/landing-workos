@@ -131,7 +131,7 @@ function ProductMockup() {
 
 
 /* Auto-rotating hero carousel: cross-fade, dots, pause on hover, reduced-motion aware */
-function HeroCarousel({ images, interval = 5000 }) {
+function HeroCarousel({ images, interval = 5000, fill = false }) {
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
   useEffect(() => {
@@ -141,18 +141,17 @@ function HeroCarousel({ images, interval = 5000 }) {
     const id = setInterval(() => setI(p => (p + 1) % images.length), interval);
     return () => clearInterval(id);
   }, [images.length, paused, interval]);
+  const wrap = fill
+    ? { position: "absolute", inset: 0, overflow: "hidden", background: c.bgAlt }
+    : { position: "relative", borderRadius: 16, overflow: "hidden", border: `1px solid ${c.line}`, boxShadow: "0 24px 60px -30px rgba(15,19,32,.35)", aspectRatio: "16 / 10", background: c.bgAlt, animation: "rise .6s ease both" };
   return (
-    <div
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      style={{ position: "relative", borderRadius: 16, overflow: "hidden", border: `1px solid ${c.line}`, boxShadow: "0 24px 60px -30px rgba(15,19,32,.35)", aspectRatio: "16 / 10", background: c.bgAlt, animation: "rise .6s ease both" }}
-    >
+    <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} style={wrap}>
       {images.map((src, idx) => (
-        <img key={idx} src={src} alt={`WorkforceOS in use \u2014 slide ${idx + 1}`}
+        <img key={idx} src={src} alt={`WorkforceOS in use, slide ${idx + 1}`}
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: idx === i ? 1 : 0, transition: "opacity .8s ease" }} />
       ))}
       {images.length > 1 && (
-        <div style={{ position: "absolute", bottom: 14, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 8 }}>
+        <div style={{ position: "absolute", bottom: 16, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 8, zIndex: 3 }}>
           {images.map((_, idx) => (
             <button key={idx} aria-label={`Go to slide ${idx + 1}`} onClick={() => setI(idx)}
               style={{ width: idx === i ? 22 : 8, height: 8, borderRadius: 20, border: "none", cursor: "pointer", padding: 0, background: idx === i ? "#fff" : "rgba(255,255,255,.55)", boxShadow: "0 1px 3px rgba(0,0,0,.35)", transition: "width .25s, background .25s" }} />
@@ -209,6 +208,23 @@ export default function WorkforceOSLanding() {
           .steps { grid-template-columns: 1fr !important; }
           .logos { gap: 20px !important; }
         }
+        .hero { position: relative; display: flex; align-items: center; min-height: calc(100vh - 64px); overflow: hidden; }
+        .hero-bg { position: absolute; inset: 0; z-index: 0; }
+        .hero-scrim { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(10,13,22,.92) 0%, rgba(10,13,22,.62) 42%, rgba(10,13,22,.12) 100%); }
+        .hero-inner { position: relative; z-index: 2; width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+        .hero-copy { max-width: 600px; }
+        .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #fff; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); padding: 5px 12px; border-radius: 20px; margin-bottom: 20px; backdrop-filter: blur(4px); }
+        .hero-h1 { font-size: clamp(34px, 5vw, 60px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.06; color: #fff; }
+        .hero-sub { margin-top: 18px; font-size: 18px; line-height: 1.6; color: rgba(255,255,255,.82); }
+        .hero-note { margin-top: 14px; font-size: 13px; color: rgba(255,255,255,.7); }
+        @media (max-width: 820px) {
+          .hero { min-height: auto; padding: 30px 0 4px; background: #fff; }
+          .hero-bg, .hero-scrim { display: none !important; }
+          .hero-eyebrow { color: ${c.accent}; background: ${c.accentSoft}; border-color: #dbe3ff; backdrop-filter: none; }
+          .hero-h1 { color: ${c.ink}; }
+          .hero-sub { color: ${c.sub}; }
+          .hero-note { color: ${c.sub}; }
+        }
       `}</style>
 
       {/* NAV */}
@@ -237,27 +253,24 @@ export default function WorkforceOSLanding() {
         )}
       </header>
 
-      {/* POSTER CAROUSEL — at the very top */}
-      <section style={{ maxWidth: 1160, margin: "0 auto", padding: "28px 24px 0" }}>
-        <HeroCarousel images={HERO_POSTERS} />
-      </section>
-
-      {/* HERO COPY */}
-      <section style={{ maxWidth: 760, margin: "0 auto", padding: "40px 24px 8px", textAlign: "center" }}>
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600, color: c.accent, background: c.accentSoft, border: `1px solid #dbe3ff`, padding: "5px 12px", borderRadius: 20, marginBottom: 20 }}>
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#16a34a" }} /> Now live for modern recruitment teams
+      {/* FULL-BLEED HERO: image covers desktop, hidden on phone, content overlaid */}
+      <section className="hero">
+        <div className="hero-bg"><HeroCarousel images={HERO_POSTERS} fill /></div>
+        <div className="hero-scrim" />
+        <div className="hero-inner">
+          <div className="hero-copy">
+            <div className="hero-eyebrow">
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block" }} /> Now live for modern recruitment teams
+            </div>
+            <h1 className="hero-h1">Run your recruitment team from one clear dashboard</h1>
+            <p className="hero-sub">WorkforceOS gives recruiters, callers, bidders, and managers a single place to track candidates, interviews, submissions, tasks, and team performance.</p>
+            <div style={{ display: "flex", gap: 12, marginTop: 28, flexWrap: "wrap" }}>
+              <button className="btn btn-pri" style={{ padding: "13px 24px", fontSize: 16 }} onClick={() => goTo("pricing")}>Start free trial</button>
+              <button className="btn btn-sec" style={{ padding: "13px 24px", fontSize: 16 }} onClick={openDemo}>Watch demo</button>
+            </div>
+            <p className="hero-note">No credit card required · Set up in minutes</p>
+          </div>
         </div>
-        <h1 style={{ fontSize: "clamp(32px, 4.6vw, 52px)", fontWeight: 800, letterSpacing: "-0.025em", lineHeight: 1.08 }}>
-          Run your recruitment team from one clear dashboard
-        </h1>
-        <p style={{ marginTop: 18, fontSize: 18, lineHeight: 1.6, color: c.sub }}>
-          WorkforceOS gives recruiters, callers, bidders, and managers a single place to track candidates, interviews, submissions, tasks, and team performance.
-        </p>
-        <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 28, flexWrap: "wrap" }}>
-          <button className="btn btn-pri" style={{ padding: "13px 24px", fontSize: 16 }} onClick={() => goTo("pricing")}>Start free trial</button>
-          <button className="btn btn-sec" style={{ padding: "13px 24px", fontSize: 16 }} onClick={openDemo}>Watch demo</button>
-        </div>
-        <p style={{ marginTop: 14, fontSize: 13, color: c.sub }}>No credit card required · Set up in minutes</p>
       </section>
 
       {/* LOGO STRIP */}
