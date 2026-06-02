@@ -125,7 +125,7 @@ function ProductMockup() {
           </div>
           {[["Rahul Kapoor", "Interview"], ["Anita Menon", "Submitted"], ["Dev Sharma", "Screening"]].map(([n, s]) => (
             <div key={n} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 0", borderTop: `1px solid ${c.line}` }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+              <div onClick={() => navigate("home")} style={{ display: "flex", alignItems: "center", gap: 9, cursor: "pointer" }}>
                 <span style={{ width: 24, height: 24, borderRadius: "50%", background: c.accentSoft, color: c.accent, fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>{n[0]}</span>
                 <span style={{ fontSize: 13, color: c.ink }}>{n}</span>
               </div>
@@ -259,11 +259,150 @@ function DemoModal({ open, onClose }) {
   );
 }
 
+function slugFromHash() {
+  const h = (typeof window !== "undefined" ? window.location.hash : "") || "";
+  const s = h.replace(/^#\/?/, "").trim();
+  return s || "home";
+}
+
+const pages = {
+  about: {
+    title: "About WorkforceOS",
+    lead: "We help recruitment teams run hiring like a real operation, not a pile of spreadsheets.",
+    blocks: [
+      { h: "Our story", p: "WorkforceOS began inside a busy recruitment agency that was running its entire pipeline on spreadsheets and scattered chat threads. We built the tool we wished we had: one place to see candidates, submissions, interviews, and team performance." },
+      { h: "What we believe", p: "Hiring teams move fast and shouldn't have to fight their tools. We focus on clarity over clutter — fewer tabs, clear ownership, and numbers people can trust." },
+      { h: "Where we are", p: "We're a small, product-focused team working with recruitment and staffing teams across India and beyond." },
+    ],
+  },
+  blog: {
+    title: "Blog",
+    lead: "Notes on hiring, recruitment operations, and building WorkforceOS.",
+    blocks: [
+      { h: "How to cut your hiring cycle by two weeks", p: "A practical look at where recruitment pipelines lose time — and the small process changes that claw it back. (March 2025)" },
+      { h: "Roles, permissions, and why they matter", p: "Giving recruiters, callers, and bidders the right access keeps work clean and accountable. Here's how we think about it. (February 2025)" },
+      { h: "Submissions vs. interviews: the metrics worth tracking", p: "Not every number deserves a dashboard. These are the few we'd actually watch. (January 2025)" },
+    ],
+  },
+  careers: {
+    title: "Careers",
+    lead: "Help us build the recruitment OS for modern hiring teams.",
+    blocks: [
+      { h: "Frontend Engineer — Remote (India)", p: "Build the WorkforceOS interface in React. You care about clean, fast, accessible UI and sweat the details." },
+      { h: "Customer Success — Bengaluru", p: "Help recruitment teams get real value from WorkforceOS in their first 30 days and beyond." },
+      { h: "Don't see your role?", p: "We're always glad to meet good people. Email careers@workforceos.com and tell us what you'd want to work on." },
+    ],
+  },
+  contact: {
+    title: "Contact us",
+    lead: "We'd love to hear from you.",
+    blocks: [
+      { h: "Support", p: "For product help, email support@workforceos.com and our team will get back to you." },
+      { h: "Sales", p: "For pricing, rollout, or a walkthrough, book a demo below or email sales@workforceos.com." },
+    ],
+  },
+  changelog: {
+    title: "Changelog",
+    lead: "What's new in WorkforceOS.",
+    blocks: [
+      { h: "v1.4 — March 2025", p: "Added built-in team chat, CSV candidate import, and faster dashboard loading." },
+      { h: "v1.3 — February 2025", p: "Role-based permissions, daily submission targets, and a redesigned pipeline view." },
+      { h: "v1.2 — January 2025", p: "Interview scheduling, analytics export, and a dark theme." },
+    ],
+  },
+  roadmap: {
+    title: "Roadmap",
+    lead: "Where we're headed. Plans can change as we learn from teams using WorkforceOS.",
+    blocks: [
+      { h: "Now", p: "Bulk candidate actions, saved dashboard views, and email notifications." },
+      { h: "Next", p: "Calendar integrations, candidate self-scheduling, and a public API." },
+      { h: "Later", p: "Mobile app, advanced reporting, and single sign-on for enterprise." },
+    ],
+  },
+  privacy: {
+    title: "Privacy Policy",
+    lead: "Last updated: March 2025.",
+    blocks: [
+      { h: "Information we collect", p: "We collect the details you provide when you create an account or request a demo — such as your name, work email, and company — along with basic usage data needed to run the product." },
+      { h: "How we use it", p: "We use your information to provide and improve WorkforceOS, respond to your requests, and keep the service secure. We do not sell your personal data." },
+      { h: "Data retention", p: "We keep your data while your account is active or as needed to provide the service and meet legal obligations, then delete or anonymize it." },
+      { h: "Your rights", p: "You can request access to, correction of, or deletion of your personal data by emailing privacy@workforceos.com." },
+      { h: "Note", p: "This page is a starting template and should be reviewed by your legal counsel before you publish it." },
+    ],
+  },
+  terms: {
+    title: "Terms of Service",
+    lead: "Last updated: March 2025.",
+    blocks: [
+      { h: "Using WorkforceOS", p: "By using WorkforceOS you agree to these terms. You are responsible for your account and the activity that happens under it." },
+      { h: "Subscriptions and billing", p: "Paid plans are billed in advance on a recurring basis. You can cancel at any time; access continues through the end of the current billing period." },
+      { h: "Acceptable use", p: "Don't misuse the service, attempt to disrupt it, or use it to break the law or infringe others' rights." },
+      { h: "Disclaimer", p: "The service is provided 'as is'. To the extent permitted by law, we limit our liability for the service." },
+      { h: "Note", p: "This page is a starting template and should be reviewed by your legal counsel before you publish it." },
+    ],
+  },
+  security: {
+    title: "Security",
+    lead: "How we protect your data.",
+    blocks: [
+      { h: "Encryption", p: "Data is encrypted in transit using TLS and at rest using industry-standard encryption." },
+      { h: "Access control", p: "Access to production systems is limited to authorized staff and protected with strong authentication." },
+      { h: "Backups and monitoring", p: "We run regular backups and monitor the service for availability and integrity." },
+      { h: "Reporting an issue", p: "Found a vulnerability? Email security@workforceos.com and we'll respond promptly." },
+    ],
+  },
+  cookies: {
+    title: "Cookie Policy",
+    lead: "Last updated: March 2025.",
+    blocks: [
+      { h: "What we use", p: "We use a small number of cookies that are necessary to keep you signed in and remember your preferences, plus optional analytics cookies." },
+      { h: "Managing cookies", p: "You can control or delete cookies in your browser settings. Disabling some cookies may affect how parts of the site work." },
+      { h: "Note", p: "This page is a starting template and should be reviewed by your legal counsel before you publish it." },
+    ],
+  },
+};
+
+/* Real content pages reached from the footer (hash-routed). */
+function ContentPage({ slug, navigate, onBookDemo }) {
+  const pg = pages[slug];
+  if (!pg) {
+    return (
+      <section style={{ maxWidth: 760, margin: "0 auto", padding: "80px 24px 110px", minHeight: "60vh" }}>
+        <span onClick={() => navigate("home")} style={{ fontSize: 14, color: c.accent, cursor: "pointer", fontWeight: 600 }}>\u2190 Back to home</span>
+        <h1 style={{ fontSize: 34, fontWeight: 800, marginTop: 18 }}>Page not found</h1>
+        <p style={{ color: c.sub, marginTop: 10 }}>We couldn't find that page.</p>
+      </section>
+    );
+  }
+  return (
+    <section style={{ maxWidth: 760, margin: "0 auto", padding: "72px 24px 96px", minHeight: "60vh" }}>
+      <span onClick={() => navigate("home")} style={{ fontSize: 14, color: c.accent, cursor: "pointer", fontWeight: 600 }}>\u2190 Back to home</span>
+      <h1 style={{ fontSize: "clamp(30px,4vw,44px)", fontWeight: 800, letterSpacing: "-0.02em", marginTop: 18 }}>{pg.title}</h1>
+      {pg.lead && <p style={{ fontSize: 18, color: c.sub, marginTop: 14, lineHeight: 1.6 }}>{pg.lead}</p>}
+      <div style={{ marginTop: 36, display: "flex", flexDirection: "column", gap: 26 }}>
+        {pg.blocks.map((b, i) => (
+          <div key={i}>
+            {b.h && <h2 style={{ fontSize: 19, fontWeight: 700, marginBottom: 8 }}>{b.h}</h2>}
+            <p style={{ fontSize: 16, color: c.sub, lineHeight: 1.7 }}>{b.p}</p>
+          </div>
+        ))}
+      </div>
+      {slug === "contact" && (
+        <div className="card" style={{ marginTop: 32, padding: 24 }}>
+          <div style={{ fontSize: 16, color: c.ink, marginBottom: 14 }}>Email <a href="mailto:hello@workforceos.com" style={{ color: c.accent }}>hello@workforceos.com</a> or book a live walkthrough.</div>
+          <button className="btn btn-pri" style={{ padding: "11px 22px" }} onClick={onBookDemo}>Book a demo</button>
+        </div>
+      )}
+    </section>
+  );
+}
+
 export default function WorkforceOSLanding() {
   const [menu, setMenu] = useState(false);
   const [theme, setTheme] = useState(() => (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light");
   const [scrolled, setScrolled] = useState(false);
   const [demoOpen, setDemoOpen] = useState(false);
+  const [route, setRoute] = useState(() => (typeof window !== "undefined" ? slugFromHash() : "home"));
   const [fRef, fIn] = useInView(0.1);
   const [pRef, pIn] = useInView(0.1);
 
@@ -273,8 +412,30 @@ export default function WorkforceOSLanding() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    const onHash = () => { setRoute(slugFromHash()); window.scrollTo({ top: 0 }); };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
   const nav = ["Features", "How it works", "Pricing", "Customers"];
-  const goTo = (id) => { setMenu(false); const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: "smooth" }); };
+  const navigate = (slug) => {
+    setMenu(false);
+    if (slug === "home") { if (window.location.hash) window.location.hash = ""; setRoute("home"); }
+    else { window.location.hash = "#/" + slug; setRoute(slug); }
+    window.scrollTo({ top: 0 });
+  };
+  const goTo = (id) => {
+    setMenu(false);
+    if (route !== "home") { navigate("home"); setTimeout(() => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: "smooth" }); }, 70); }
+    else { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: "smooth" }); }
+  };
+  const footerNav = (label) => {
+    const homeMap = { Features: "features", Pricing: "pricing" };
+    const pageMap = { Changelog: "changelog", Roadmap: "roadmap", About: "about", Blog: "blog", Careers: "careers", Contact: "contact", Privacy: "privacy", Terms: "terms", Security: "security", Cookies: "cookies" };
+    if (homeMap[label]) return goTo(homeMap[label]);
+    if (pageMap[label]) return navigate(pageMap[label]);
+  };
   const openDemo = () => window.open(DEMO_URL, "_blank", "noopener,noreferrer");
 
   return (
@@ -375,6 +536,8 @@ export default function WorkforceOSLanding() {
         )}
       </header>
 
+      {route === "home" ? (
+        <>
       {/* FULL-BLEED HERO: image covers desktop, hidden on phone, content overlaid */}
       <section className="hero">
         <div className="hero-bg"><HeroCarousel images={HERO_POSTERS} fill /></div>
@@ -521,6 +684,11 @@ export default function WorkforceOSLanding() {
         </div>
       </section>
 
+        </>
+      ) : (
+        <ContentPage slug={route} navigate={navigate} onBookDemo={() => setDemoOpen(true)} />
+      )}
+
       {/* FOOTER */}
       <footer style={{ borderTop: `1px solid ${c.line}` }}>
         <div style={{ maxWidth: 1160, margin: "0 auto", padding: "44px 24px 32px" }}>
@@ -536,7 +704,7 @@ export default function WorkforceOSLanding() {
               <div key={title}>
                 <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 14 }}>{title}</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
-                  {links.map(l => <a key={l} href="#" style={{ fontSize: 14, color: c.sub, textDecoration: "none" }}>{l}</a>)}
+                  {links.map(l => <span key={l} onClick={() => footerNav(l)} style={{ fontSize: 14, color: c.sub, textDecoration: "none", cursor: "pointer" }} onMouseEnter={e => e.currentTarget.style.color = c.ink} onMouseLeave={e => e.currentTarget.style.color = c.sub}>{l}</span>)}
                 </div>
               </div>
             ))}
