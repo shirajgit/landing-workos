@@ -171,10 +171,99 @@ function HeroCarousel({ images, interval = 5000, fill = false }) {
   );
 }
 
+/* Book-a-demo form (modal). No <form> tag per artifact rules; uses controlled inputs. */
+function DemoModal({ open, onClose }) {
+  const [form, setForm] = useState({ name: "", email: "", company: "", size: "1-10", message: "" });
+  const [err, setErr] = useState({});
+  const [sent, setSent] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+  }, [open, onClose]);
+  if (!open) return null;
+  const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }));
+  const submit = () => {
+    const e = {};
+    if (!form.name.trim()) e.name = "Please enter your name";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Enter a valid work email";
+    if (!form.company.trim()) e.company = "Please enter your company";
+    setErr(e);
+    if (Object.keys(e).length) return;
+    /* TODO: send `form` to your backend or a form service (e.g. Formspree, your API). */
+    setSent(true);
+  };
+  const close = () => { onClose(); setTimeout(() => { setSent(false); setErr({}); }, 200); };
+  return (
+    <div role="dialog" aria-modal="true" aria-label="Book a demo"
+      onMouseDown={(e) => { if (e.target === e.currentTarget) close(); }}
+      style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(8,11,18,.55)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+      <div style={{ width: "100%", maxWidth: 460, maxHeight: "90vh", overflowY: "auto", background: "var(--surface)", color: c.ink, border: `1px solid ${c.line}`, borderRadius: 16, padding: "24px", boxShadow: "0 30px 80px -20px rgba(0,0,0,.5)", animation: "rise .3s ease both" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: sent ? 0 : 18 }}>
+          <div>
+            <h3 style={{ fontSize: 20, fontWeight: 800, letterSpacing: "-0.02em" }}>Book a demo</h3>
+            {!sent && <p style={{ fontSize: 14, color: c.sub, marginTop: 4 }}>See WorkforceOS with your team's workflow. We'll reach out to schedule a time.</p>}
+          </div>
+          <button onClick={close} aria-label="Close" style={{ background: "transparent", border: "none", color: c.sub, cursor: "pointer", padding: 4, marginLeft: 12 }}>
+            <Icon d={<path d="M18 6 6 18M6 6l12 12" />} size={20} />
+          </button>
+        </div>
+
+        {sent ? (
+          <div style={{ textAlign: "center", padding: "14px 6px 6px" }}>
+            <div style={{ width: 54, height: 54, borderRadius: "50%", background: c.accentSoft, color: c.accent, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+              <Icon d={<path d="M20 6 9 17l-5-5" />} size={26} />
+            </div>
+            <h3 style={{ fontSize: 19, fontWeight: 800 }}>Request received</h3>
+            <p style={{ fontSize: 14, color: c.sub, margin: "8px auto 20px", maxWidth: 320, lineHeight: 1.55 }}>Thanks, {form.name.split(" ")[0] || "there"} — we'll email you at {form.email} to set up your demo.</p>
+            <button className="btn btn-pri" style={{ padding: "11px 24px" }} onClick={close}>Done</button>
+          </div>
+        ) : (
+          <div>
+            <div style={{ marginBottom: 14 }}>
+              <label className="lbl">Full name</label>
+              <input className={"fld" + (err.name ? " fld-err" : "")} value={form.name} onChange={set("name")} placeholder="Jane Doe" />
+              {err.name && <div className="err-msg">{err.name}</div>}
+            </div>
+            <div style={{ marginBottom: 14 }}>
+              <label className="lbl">Work email</label>
+              <input className={"fld" + (err.email ? " fld-err" : "")} type="email" value={form.email} onChange={set("email")} placeholder="jane@company.com" />
+              {err.email && <div className="err-msg">{err.email}</div>}
+            </div>
+            <div style={{ marginBottom: 14 }}>
+              <label className="lbl">Company</label>
+              <input className={"fld" + (err.company ? " fld-err" : "")} value={form.company} onChange={set("company")} placeholder="Acme Recruiting" />
+              {err.company && <div className="err-msg">{err.company}</div>}
+            </div>
+            <div style={{ marginBottom: 14 }}>
+              <label className="lbl">Team size</label>
+              <select className="fld" value={form.size} onChange={set("size")}>
+                <option value="1-10">1-10</option>
+                <option value="11-50">11-50</option>
+                <option value="51-200">51-200</option>
+                <option value="200+">200+</option>
+              </select>
+            </div>
+            <div style={{ marginBottom: 20 }}>
+              <label className="lbl">What would you like to see? <span style={{ fontWeight: 400, color: c.sub }}>(optional)</span></label>
+              <textarea className="fld" value={form.message} onChange={set("message")} placeholder="Tell us about your hiring workflow..." />
+            </div>
+            <button className="btn btn-pri" style={{ width: "100%", padding: "13px" }} onClick={submit}>Request demo</button>
+            <p style={{ fontSize: 12, color: c.sub, textAlign: "center", marginTop: 12 }}>We'll only use your details to schedule the demo.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function WorkforceOSLanding() {
   const [menu, setMenu] = useState(false);
   const [theme, setTheme] = useState(() => (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light");
   const [scrolled, setScrolled] = useState(false);
+  const [demoOpen, setDemoOpen] = useState(false);
   const [fRef, fIn] = useInView(0.1);
   const [pRef, pIn] = useInView(0.1);
 
@@ -245,6 +334,14 @@ export default function WorkforceOSLanding() {
           .hero-sub { color: ${c.sub}; }
           .hero-note { color: ${c.sub}; }
         }
+        .lbl { display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:${c.ink}; }
+        .fld { width:100%; font-family:${FONT}; font-size:15px; color:${c.ink}; background:var(--bg); border:1px solid ${c.line}; border-radius:9px; padding:10px 12px; outline:none; transition:border-color .15s; }
+        .fld:focus { border-color:${c.accent}; }
+        .fld::placeholder { color:${c.sub}; }
+        select.fld { appearance:none; -webkit-appearance:none; }
+        textarea.fld { resize:vertical; min-height:74px; }
+        .fld-err { border-color:#e5484d !important; }
+        .err-msg { color:#e5484d; font-size:12px; margin-top:5px; }
       `}</style>
 
       {/* NAV */}
@@ -419,7 +516,7 @@ export default function WorkforceOSLanding() {
           <p style={{ fontSize: 17, color: "#aeb6c6", maxWidth: 460, margin: "0 auto 28px", lineHeight: 1.6 }}>Manage candidates, submissions, and interviews from one place.</p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
             <button className="btn" style={{ background: "#fff", color: "#0f1320", border: "1px solid #fff", padding: "13px 26px", fontSize: 16 }} onClick={() => goTo("pricing")}>Get started free</button>
-            <button className="btn" style={{ background: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,.3)", padding: "13px 26px", fontSize: 16 }} onClick={openDemo}>Book a demo</button>
+            <button className="btn" style={{ background: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,.3)", padding: "13px 26px", fontSize: 16 }} onClick={() => setDemoOpen(true)}>Book a demo</button>
           </div>
         </div>
       </section>
@@ -447,6 +544,8 @@ export default function WorkforceOSLanding() {
           <div style={{ borderTop: `1px solid ${c.line}`, paddingTop: 22, fontSize: 13, color: c.sub }}>© 2025 WorkforceOS. All rights reserved.</div>
         </div>
       </footer>
+
+      <DemoModal open={demoOpen} onClose={() => setDemoOpen(false)} />
     </div>
   );
 }
