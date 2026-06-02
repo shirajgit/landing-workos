@@ -13,15 +13,15 @@ const HERO_POSTERS = [
 const DEMO_URL = "https://your-demo-link.example.com";
 
 const c = {
-  bg: "#ffffff",
-  bgAlt: "#f6f7f9",
-  ink: "#0f1320",
-  sub: "#5b6473",
-  line: "#e6e8ee",
-  accent: "#1d4ed8",
-  accentText: "#1d4ed8",
-  accentSoft: "#eef2ff",
-  dark: "#0f1320",
+  bg: "var(--bg)",
+  bgAlt: "var(--bg-alt)",
+  ink: "var(--ink)",
+  sub: "var(--sub)",
+  line: "var(--line)",
+  accent: "var(--accent)",
+  accentText: "var(--accent)",
+  accentSoft: "var(--accent-soft)",
+  dark: "var(--band)",
 };
 
 const FONT = "'Hanken Grotesk', -apple-system, system-ui, sans-serif";
@@ -50,6 +50,8 @@ const icons = {
   pipeline: <><circle cx="6" cy="6" r="3" /><circle cx="6" cy="18" r="3" /><path d="M18 6a9 9 0 0 1-9 9" /><circle cx="18" cy="6" r="3" /></>,
   chat: <><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></>,
   chart: <><path d="M3 3v18h18" /><path d="M7 14l3-3 3 3 4-5" /></>,
+  sun: <><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></>,
+  moon: <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z" />,
 };
 
 const features = [
@@ -83,7 +85,7 @@ const testimonials = [
 /* Clean, sharp product mockup (real text, light UI) */
 function ProductMockup() {
   return (
-    <div style={{ border: `1px solid ${c.line}`, borderRadius: 12, overflow: "hidden", background: "#fff", boxShadow: "0 12px 40px -18px rgba(15,19,32,.22)" }}>
+    <div style={{ border: `1px solid ${c.line}`, borderRadius: 12, overflow: "hidden", background: "var(--surface)", boxShadow: "0 12px 40px -18px rgba(15,19,32,.22)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "11px 14px", borderBottom: `1px solid ${c.line}`, background: c.bgAlt }}>
         <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#e4e6eb" }} />
         <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#e4e6eb" }} />
@@ -164,6 +166,7 @@ function HeroCarousel({ images, interval = 5000, fill = false }) {
 
 export default function WorkforceOSLanding() {
   const [menu, setMenu] = useState(false);
+  const [theme, setTheme] = useState(() => (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light");
   const [scrolled, setScrolled] = useState(false);
   const [fRef, fIn] = useInView(0.1);
   const [pRef, pIn] = useInView(0.1);
@@ -179,22 +182,32 @@ export default function WorkforceOSLanding() {
   const openDemo = () => window.open(DEMO_URL, "_blank", "noopener,noreferrer");
 
   return (
-    <div style={{ background: c.bg, color: c.ink, fontFamily: FONT, minHeight: "100vh", overflowX: "hidden" }}>
+    <div data-theme={theme} style={{ background: c.bg, color: c.ink, fontFamily: FONT, minHeight: "100vh", overflowX: "hidden", transition: "background-color .25s ease, color .25s ease" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body { -webkit-font-smoothing: antialiased; }
+        [data-theme="light"] {
+          --bg:#ffffff; --bg-alt:#f6f7f9; --surface:#ffffff;
+          --ink:#0f1320; --sub:#5b6473; --line:#e6e8ee;
+          --accent:#1d4ed8; --accent-soft:#eef2ff; --band:#0f1320; --nav-bg:rgba(255,255,255,.85);
+        }
+        [data-theme="dark"] {
+          --bg:#0b0f17; --bg-alt:#0f1420; --surface:#141a26;
+          --ink:#f2f5fa; --sub:#9aa4b6; --line:#242b3a;
+          --accent:#7aa2ff; --accent-soft:rgba(122,162,255,.14); --band:#141a26; --nav-bg:rgba(11,15,23,.82);
+        }
         @keyframes rise { from { opacity:0; transform: translateY(14px); } to { opacity:1; transform:none; } }
         a { color: inherit; }
         .lnk { color: ${c.sub}; text-decoration: none; font-size: 15px; font-weight: 500; cursor: pointer; }
         .lnk:hover { color: ${c.ink}; }
         .btn { font-family: ${FONT}; font-weight: 600; cursor: pointer; border-radius: 9px; font-size: 15px; transition: background .15s, border-color .15s; }
         .btn-pri { background: ${c.accent}; color: #fff; border: 1px solid ${c.accent}; padding: 11px 20px; }
-        .btn-pri:hover { background: #1842b8; }
-        .btn-sec { background: #fff; color: ${c.ink}; border: 1px solid ${c.line}; padding: 11px 20px; }
+        .btn-pri:hover { filter: brightness(0.94); }
+        .btn-sec { background: var(--surface); color: ${c.ink}; border: 1px solid ${c.line}; padding: 11px 20px; }
         .btn-sec:hover { border-color: #c7ccd6; }
-        .card { background:#fff; border:1px solid ${c.line}; border-radius: 14px; }
+        .card { background: var(--surface); border:1px solid ${c.line}; border-radius: 14px; }
         .feat:hover { border-color:#c7ccd6; }
         .mtoggle { display:none; }
         @media (max-width: 900px) {
@@ -228,7 +241,7 @@ export default function WorkforceOSLanding() {
       `}</style>
 
       {/* NAV */}
-      <header style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(255,255,255,.85)", backdropFilter: "blur(10px)", borderBottom: scrolled ? `1px solid ${c.line}` : "1px solid transparent", transition: "border-color .2s" }}>
+      <header style={{ position: "sticky", top: 0, zIndex: 50, background: "var(--nav-bg)", backdropFilter: "blur(10px)", borderBottom: scrolled ? `1px solid ${c.line}` : "1px solid transparent", transition: "border-color .2s" }}>
         <div style={{ maxWidth: 1160, margin: "0 auto", height: 64, padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
             <div style={{ width: 28, height: 28, borderRadius: 7, background: c.accent, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: 15 }}>W</div>
@@ -237,13 +250,18 @@ export default function WorkforceOSLanding() {
           <nav className="dnav" style={{ display: "flex", gap: 28 }}>
             {nav.map(l => <span key={l} className="lnk" onClick={() => goTo(l.toLowerCase().replace(/ /g, "-"))}>{l}</span>)}
           </nav>
-          <div className="dact" style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <span className="lnk" style={{ fontWeight: 600 }}>Log in</span>
-            <button className="btn btn-pri" onClick={() => goTo("pricing")}>Get started</button>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div className="dact" style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              <span className="lnk" style={{ fontWeight: 600 }}>Log in</span>
+              <button className="btn btn-pri" onClick={() => goTo("pricing")}>Get started</button>
+            </div>
+            <button className="themebtn" onClick={() => setTheme(t => t === "dark" ? "light" : "dark")} aria-label="Toggle dark mode" style={{ background: "var(--surface)", border: `1px solid ${c.line}`, color: c.ink, width: 40, height: 40, borderRadius: 9, display: "inline-flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0 }}>
+              <Icon d={theme === "dark" ? icons.sun : icons.moon} size={18} />
+            </button>
+            <button className="btn mtoggle" onClick={() => setMenu(v => !v)} style={{ background: "var(--surface)", border: `1px solid ${c.line}`, color: c.ink, width: 40, height: 40, alignItems: "center", justifyContent: "center", padding: 0 }} aria-label="Menu">
+              <Icon d={menu ? <path d="M18 6 6 18M6 6l12 12" /> : <><path d="M3 12h18" /><path d="M3 6h18" /><path d="M3 18h18" /></>} size={20} />
+            </button>
           </div>
-          <button className="btn mtoggle" onClick={() => setMenu(v => !v)} style={{ background: "#fff", border: `1px solid ${c.line}`, width: 40, height: 40, alignItems: "center", justifyContent: "center", padding: 0 }} aria-label="Menu">
-            <Icon d={menu ? <path d="M18 6 6 18M6 6l12 12" /> : <><path d="M3 12h18" /><path d="M3 6h18" /><path d="M3 18h18" /></>} size={20} />
-          </button>
         </div>
         {menu && (
           <div style={{ borderTop: `1px solid ${c.line}`, padding: "12px 24px 18px", display: "flex", flexDirection: "column", gap: 4 }}>
@@ -344,7 +362,7 @@ export default function WorkforceOSLanding() {
           <h2 style={{ fontSize: "clamp(26px,3.2vw,38px)", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 44 }}>What teams are saying</h2>
           <div className="g3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
             {testimonials.map(t => (
-              <div key={t.name} className="card" style={{ padding: 24, background: "#fff" }}>
+              <div key={t.name} className="card" style={{ padding: 24, background: "var(--surface)" }}>
                 <p style={{ fontSize: 16, lineHeight: 1.6, color: c.ink, marginBottom: 22 }}>“{t.text}”</p>
                 <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
                   <span style={{ width: 38, height: 38, borderRadius: "50%", background: c.accentSoft, color: c.accent, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>{t.name[0]}</span>
@@ -393,7 +411,7 @@ export default function WorkforceOSLanding() {
           <h2 style={{ fontSize: "clamp(24px,3vw,36px)", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 14 }}>Ready to scale your recruitment team?</h2>
           <p style={{ fontSize: 17, color: "#aeb6c6", maxWidth: 460, margin: "0 auto 28px", lineHeight: 1.6 }}>Manage candidates, submissions, and interviews from one place.</p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <button className="btn" style={{ background: "#fff", color: c.ink, border: "1px solid #fff", padding: "13px 26px", fontSize: 16 }} onClick={() => goTo("pricing")}>Get started free</button>
+            <button className="btn" style={{ background: "#fff", color: "#0f1320", border: "1px solid #fff", padding: "13px 26px", fontSize: 16 }} onClick={() => goTo("pricing")}>Get started free</button>
             <button className="btn" style={{ background: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,.3)", padding: "13px 26px", fontSize: 16 }} onClick={openDemo}>Book a demo</button>
           </div>
         </div>
