@@ -517,7 +517,7 @@ export default function WorkforceOSLanding() {
           </nav>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div className="dact" style={{ display: "flex", alignItems: "center", gap: 14 }}>
-              <a href="https://workmaxos.vercel.app/" style={{ textDecoration: "none" }}><span className="lnk" style={{ fontWeight: 600 }}>Log in</span></a>
+              <a href="https://workmax-os.vercel.app/" style={{ textDecoration: "none" }}><span className="lnk" style={{ fontWeight: 600 }}>Log in</span></a>
               <button className="btn btn-pri" onClick={() => goTo("pricing")}>Get started</button>
             </div>
             <button className="themebtn" onClick={() => setTheme(t => t === "dark" ? "light" : "dark")} aria-label="Toggle dark mode" style={{ background: "var(--surface)", border: `1px solid ${c.line}`, color: c.ink, width: 40, height: 40, borderRadius: 9, display: "inline-flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0 }}>
